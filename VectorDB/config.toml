@@ -1,0 +1,9 @@
+[embedder]
+model_name="all-MiniLM-L6-v2"
+[embedder.model_kwargs]
+device="cuda"
+
+[service]
+host="localhost"
+port=8001
+reload=true
