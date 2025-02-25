@@ -180,3 +180,6 @@ logs/
 
 # VectorDB cache files
 ChromaDB/
+
+# API Keys
+API_KEYS.toml
