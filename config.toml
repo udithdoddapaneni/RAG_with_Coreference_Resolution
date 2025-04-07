@@ -1,3 +1,7 @@
+[FCoref]
+device="cuda"
+enable_progress_bar=false
+
 [gemini]
 model="gemini-1.5-flash"
 temperature=0

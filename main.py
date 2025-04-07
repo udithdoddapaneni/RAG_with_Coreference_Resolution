@@ -2,8 +2,8 @@ import streamlit as st
 from RAG.rag import graph, UpdateDatabase
 
 def main():
-    st.set_page_config(page_title="RAG Application", layout="wide")
-    st.title("🧠 RAG-Powered QA System")
+    st.set_page_config(page_title="Marci", layout="wide")
+    st.title("Marci: A Contextual AI Assistant")
 
     # Query Input Section
     query = st.text_input("Enter your query:", "")

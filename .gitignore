@@ -183,3 +183,11 @@ ChromaDB/
 
 # API Keys
 API_KEYS.toml
+
+# Files currently not using
+SavedFiles/
+
+# Files - later uncomment once dataset is built
+Files/
+
+questions/raw_data

@@ -3,12 +3,13 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_text_splitters import CharacterTextSplitter
 from langgraph.graph import StateGraph, START, END
 from typing import TypedDict
+from preprocessing.preprocessing import ResolveReferences
 import httpx
 import toml
 import os
 import json
 
-CONFIG = toml.load("RAG/config.toml")
+CONFIG = toml.load("config.toml")
 N = CONFIG["client"]["n"]
 URL = CONFIG["client"]["url"]
 GEMINI_CONFIG = CONFIG["gemini"]
@@ -23,9 +24,8 @@ for key, item in API_KEYS.items():
 splitter = CharacterTextSplitter(**SPLITTER_CONFIG)
 
 def save(documents:list[str], filenames:list[str]) -> str:
-    response = httpx.request(
-        method="POST", 
-        url=URL+"/save", 
+    response = httpx.post(
+        url=URL+"/save",
         json={"documents":documents, "filenames":filenames}
     )
     result = json.loads(response.content)
@@ -34,8 +34,7 @@ def save(documents:list[str], filenames:list[str]) -> str:
     return result["exception"]
 
 def reset() -> str:
-    response = httpx.request(
-        method="GET", 
+    response = httpx.get(
         url=URL+"/reset", 
     )
     result = json.loads(response.content)
@@ -50,6 +49,7 @@ def UpdateDatabase():
                 filepath = os.path.join(root, filename)
                 with open(filepath, "r") as file:
                     text = open(filepath, "r").read()
+                text = ResolveReferences(text) # resolve coreferences
                 documents = splitter.split_text(text)
                 response = save(documents, [filepath]*len(documents))
                 if response != "success":
@@ -59,13 +59,13 @@ def UpdateDatabase():
     return "failure while resetting database"
 
 def retrieve(query:str, n:int) -> list[str]|str:
-    response = httpx.request(
-        method="POST", 
+    response = httpx.post(
         url=URL+"/retrieve", 
         json={"query":query, "n":n}
     )
     result = json.loads(response.content)
     if result["response"] == "success":
+        print(result["documents"])
         return result["documents"] # list[str]
     return result["exception"] # str
 

@@ -12,6 +12,7 @@ config = toml.load("config.toml")
 model = HuggingFaceEmbeddings(**config["embedder"])
 
 class ChromaDB:
+    """Class for chroma DB"""
     def __init__(self):
         self.path = "ChromaDB/"
         self.client = chromadb.PersistentClient(path=self.path)
