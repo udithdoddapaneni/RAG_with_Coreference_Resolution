@@ -42,14 +42,15 @@ def reset() -> str:
         return "success"
     return result["exception"]
 
-def UpdateDatabase():
+def UpdateDatabase(resolve_refs=True):
     if reset() == "success":
         for root, dirs, files in os.walk("./Files"):
             for filename in files:
                 filepath = os.path.join(root, filename)
                 with open(filepath, "r") as file:
                     text = open(filepath, "r").read()
-                text = ResolveReferences(text) # resolve coreferences
+                if resolve_refs:
+                    text = ResolveReferences(text) # resolve coreferences
                 documents = splitter.split_text(text)
                 response = save(documents, [filepath]*len(documents))
                 if response != "success":
@@ -58,16 +59,18 @@ def UpdateDatabase():
         return "success"
     return "failure while resetting database"
 
-def retrieve(query:str, n:int) -> list[str]|str:
+def retrieve(query:str, n:int) -> list[str]:
     response = httpx.post(
         url=URL+"/retrieve", 
-        json={"query":query, "n":n}
+        json={"query":query, "n":n},
+        timeout=60
     )
     result = json.loads(response.content)
     if result["response"] == "success":
-        print(result["documents"])
         return result["documents"] # list[str]
-    return result["exception"] # str
+    else:
+        print(result["exception"])
+        return []
 
 RAGPrompt = ChatPromptTemplate.from_messages([
     ("system", "{context}\n\n Answer the below query based on the above question"),
@@ -83,10 +86,15 @@ class State(TypedDict):
     answer: str
 
 def Retrieve(State:State):
-    context = retrieve(State["query"], n=N)[0]
+    context = retrieve(
+        query=State["query"], 
+        n=N
+    )
+    print("retrieved context:")
+    print(context)
     return {"query":State["query"], "context": context, "answer":State["answer"]}
 
-def LLMQuery(State: State):
+def LLMQuery(State:State):
     context = "\n".join(State["context"])
     answer = LLMChain.invoke({
         "context": context,
@@ -94,13 +102,19 @@ def LLMQuery(State: State):
     }).content
     return {"query": State["query"], "context": State["context"], "answer":answer}
 
-builder = StateGraph(State)
+builder_retriver = StateGraph(State)
+builder_retriver.add_node("retriever", Retrieve)
+builder_retriver.add_node("llm", LLMQuery)
+builder_retriver.add_edge(START, "retriever")
+builder_retriver.add_edge("retriever", "llm")
+builder_retriver.add_edge("llm", END)
+graph_with_retriever = builder_retriver.compile()
 
-builder.add_node("retriever", Retrieve)
-builder.add_node("llm", LLMQuery)
 
-builder.add_edge(START, "retriever")
-builder.add_edge("retriever", "llm")
-builder.add_edge("llm", END)
+builder_direct = StateGraph(State)
+builder_direct.add_node("llm", LLMQuery)
+builder_direct.add_edge(START, "llm")
+builder_direct.add_edge("llm", END)
+graph_direct = builder_direct.compile()
 
-graph = builder.compile()
+

@@ -1,5 +1,5 @@
 """Run from inside VectorDB directory"""
-from models import Documents, Query
+from models import Documents, Query, QueryDocument
 from langchain_huggingface import HuggingFaceEmbeddings
 import chromadb
 import uuid
@@ -9,7 +9,8 @@ import uvicorn
 
 app = fastapi.FastAPI()
 config = toml.load("config.toml")
-model = HuggingFaceEmbeddings(**config["embedder"])
+
+EMBED_MODEL = HuggingFaceEmbeddings(**config["embedder"])
 
 class ChromaDB:
     """Class for chroma DB"""
@@ -38,7 +39,7 @@ DB = ChromaDB()
 async def save(documents:Documents) -> dict:
     """Save documents in the vector database"""
     try:
-        embeddings = await model.aembed_documents(documents.documents)
+        embeddings = await EMBED_MODEL.aembed_documents(documents.documents)
         DB.add(
             documents=documents.documents,
             filenames=documents.filenames,
@@ -61,9 +62,9 @@ async def reset() -> dict:
 async def retrieve(query:Query) -> dict:
     """Retrieve most similar documents"""
     try:
-        embedding = await model.aembed_query(query.query)
+        embedding = await EMBED_MODEL.aembed_query(query.query)
         documents = DB.query(embedding=embedding, n=query.n)["documents"]
-        return {"response": "success", "documents": documents}
+        return {"response": "success", "documents": documents[0]}
     except Exception as e:
         return {"response": "failure", "exception": str(e)}
     

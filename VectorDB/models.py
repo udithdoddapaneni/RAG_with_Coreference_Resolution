@@ -7,3 +7,7 @@ class Documents(BaseModel):
 class Query(BaseModel):
     query: str = Field(default="", strict=True)
     n: int = Field(default=10, strict=True)
+
+class QueryDocument(BaseModel):
+    query: str = Field(default="", strict=True)
+    docs: list[str] = Field(default=[], strict=True)
