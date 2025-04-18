@@ -67,18 +67,3 @@ Many countries have raised concerns about data security and DeepSeek's use of pe
 Three days later, South Korea's Personal Information Protection Commission opened an inquiry into DeepSeek's use of personal information; the Dutch Data Protection Authority launched an investigation of Deep Seek; Taiwan's digital ministry advised its government departments against using the DeepSeek service to "prevent information security risks"; and  Texas Governor Greg Abbott issued a state ban on government-issued devices for DeepSeek, along with Xiaohongshu and Lemon8.
 
 In February 2025, access to DeepSeek was banned on the New South Wales Department of Customer Service's devices. That same month, Australia, South Korea, and Canada banned DeepSeek from government devices, and South Korea suspended new downloads of DeepSeek due to risks of personal information misuse. In March 2025, the U.S. Department of Commerce prohibited DeekSeek on their government devices, due to the danger of disclosing proprietary information with the Chinese Communist Party.
-
-See also
-
-Notes
-
-References
-
-External links
- 
-
-Category:2025 software
-Category:Chatbots
-Category:Generative pre-trained transformers
-Category:Interactive narrative
-Category:2025 in artificial intelligence

@@ -39,11 +39,3 @@ Datacenter
 
 Consumer
  Die GB202 GB203 GB205 GB206 GB207 Variant(s) GB202-300-A1 GB203-200-A1  GB203-300-A1  GB203-400-A1 GB205-300-A1   Release date      Cores CUDA Cores 24,576 10,752 6,400 4,608 2,560 TMUs 768 336 200 144 80 ROPs 192 112 80 48 32 RT Cores 192 84 50 36 20 Tensor Cores 768 336 200 144 80  192 84 50 36 20  12 7 5 3 2 Cache L1 24MB 10.5MB 6.25MB 4.5MB 2.5MB L2 128MB 64MB 48MB 32MB 32MB Memory interface 512-bit 256-bit 192-bit 128-bit 128-bit Die size 750mm2 378mm2 263mm2 181mm2  Transistor count 92.2bn. 45.6bn. 31.1bn. 21.9 bn.  Transistor density 122.6MTr/mm2 120.6MTr/mm2 118.3MTr/mm2 121.0 MTr/mm2  Products Consumer Desktop RTX 5090  RTX 5090 D RTX 5070 Ti  RTX 5080 RTX 5070   Mobile  RTX 5080 Laptop RTX 5090 Laptop RTX 5070 Ti Laptop RTX 5070 Laptop  Workstation Desktop RTX PRO 5000 RTX PRO 6000 RTX PRO 4000 RTX PRO 4500    Mobile  RTX PRO 4000 Mobile RTX PRO 5000 Mobile RTX PRO 3000 Mobile RTX PRO 2000 Mobile RTX PRO 500 Mobile RTX PRO 1000 Mobile Server RTX PRO 6000
-
- See also 
- List of eponyms of Nvidia GPU microarchitectures
-
- References 
-
-Category:Nvidia microarchitectures
-Nvidia Blackwell

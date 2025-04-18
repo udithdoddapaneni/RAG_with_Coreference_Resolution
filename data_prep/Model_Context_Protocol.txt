@@ -1,0 +1,108 @@
+The Model Context Protocol (MCP) is an open standard developed by the artificial intelligence company Anthropic for enabling large language model (LLM) applications to interact with external tools, systems, and data sources. Designed to standardize context exchange between AI assistants and software environments, MCP provides a model-agnostic interface for reading files, executing functions, and handling contextual prompts. It was officially announced and open-sourced by Anthropic in November 2024, with subsequent adoption by major AI providers including OpenAI and Google DeepMind.
+
+ Background 
+Anthropic, known for the development of the Claude family of language models, introduced MCP to address the growing complexity of integrating LLMs with third-party systems. Before MCP, developers often had to build custom connectors for each data source or tool, resulting in what Anthropic described as an "N×M" integration problem.
+
+MCP was designed as a response to this challenge, offering a universal protocol for interfacing any AI assistant with any structured tool or data layer. The protocol was released with SDKs in multiple languages, including Python, TypeScript, Java, and C#.
+
+Early adopters of MCP included Block (formerly Square), Apollo, and Sourcegraph, all of whom used the protocol to allow internal AI systems to access proprietary knowledge bases and developer tools.
+
+ Architecture 
+MCP follows a modular client–server architecture that decouples AI assistants from backend services. A typical MCP deployment includes:
+ A host process, such as a desktop assistant or chatbot.
+ One or more MCP clients, lightweight intermediaries spawned by the host.
+ One or more MCP servers, each exposing data and tools to the AI through a standard schema.
+
+MCP clients communicate with servers using a JSON-RPC interface over streams such as stdio (for local processes) or HTTP with server-sent events (for remote services).
+
+Each MCP server declares its functionality using three categories:
+ Resources — static or queryable datasets (e.g., files, emails, documents).
+ Tools — invokable functions or APIs (e.g., "create task", "fetch database row").
+ Prompts — context-aware text templates (e.g., “summarize this report”).
+
+All communication is brokered by the host, which manages connection permissions, orchestrates execution, and ensures that each MCP client operates within its own sandboxed environment.
+
+ Protocol details 
+The Model Context Protocol is a modular, message-based application-layer protocol designed to facilitate communication between AI assistants and structured data or tool environments. It follows a client–server pattern over a persistent stream, typically mediated by a host AI system.
+
++ Model Context Protocol summary Field  Description Layer  Application Transport protocols  Standard input/output (stdio), HTTP with Server-Sent Events (SSE); optionally extended via WebSockets or custom transports Data format  JSON (based on JSON-RPC 2.0), with support for streaming responses and partial results Serialization  UTF-8 encoded JSON; alternative binary encodings (e.g. MessagePack) supported by custom implementations Discovery  Dynamic introspection using tools/list, resources/list, and related methods Versioning  Date-based version tags (e.g. 2025-03-26); negotiated at session start Authentication  Host-mediated; optionally token-based (e.g. OAuth, API keys) for remote servers Security  Host permission model, process sandboxing, HTTPS for remote connections, Origin header validation Developer SDKs  Python, TypeScript/JavaScript, Rust, Java, C#, Swift (maintained under the Model Context Protocol GitHub org) Status  Open standard; active development Website  modelcontextprotocol.io
+
+ Applications 
+MCP has been applied across a range of use cases in software development, enterprise environments, and natural language automation:
+ Software development: IDEs such as Zed, platforms like Replit, and code intelligence tools such as Sourcegraph integrated MCP to give coding assistants access to real-time code context.
+ Enterprise assistants: Companies like Block and Apollo use MCP to allow internal assistants to retrieve information from proprietary documents, CRM systems, and company knowledge bases.
+ Natural language data access: Applications like AI2SQL leverage MCP to connect models with SQL databases, enabling plain-language queries.
+ Desktop assistants: The Claude Desktop app runs local MCP servers to allow the assistant to read files or interact with system tools securely.
+ Multi-tool agents: MCP supports agentic AI workflows involving multiple tools (e.g., document lookup + messaging APIs), enabling chain-of-thought reasoning over distributed resources.
+
+ Adoption 
+On March 26, 2025, OpenAI announced support for MCP across its Agents SDK and ChatGPT desktop applications. CEO Sam Altman stated that "People love MCP and we are excited to add support across our products."
+
+Two weeks later, Demis Hassabis, CEO of Google DeepMind, confirmed MCP support in the upcoming Gemini models and related infrastructure, describing the protocol as a "rapidly emerging open standard for agentic AI".
+
+By mid-2025, dozens of MCP server implementations had been released, including community-maintained connectors for Slack, GitHub, PostgreSQL, Google Drive, and Stripe.
+
+ Comparison with other systems 
+MCP has been compared to:
+ OpenAI Function Calling: While function calling lets LLMs invoke user-defined functions, MCP offers a broader, model-agnostic infrastructure for tool discovery, access control, and streaming interactions.
+ OpenAI Plugins and “Work with Apps”: These rely on curated partner integrations, whereas MCP supports decentralized, user-defined tool servers.
+ Google Bard extensions: Limited to internal Google products. MCP allows arbitrary third-party integrations.
+ LangChain / LlamaIndex: While these libraries orchestrate tool-use workflows, MCP provides the underlying communication protocol they can build upon.
+
+ Technical specification 
+The Model Context Protocol (MCP) defines communication using the JSON-RPC 2.0 specification. All requests, responses, and notifications are encoded as JSON objects. Tools and resources advertise their interfaces using JSON Schema, allowing AI agents to validate inputs and outputs dynamically and without custom integrations.
+
+MCP supports multiple transports:
+ Standard I/O (stdio) for local communication between a host application and subprocess servers.
+ HTTP with Server-Sent Events (SSE) for full-duplex, persistent streaming between remote services.
+ Custom transports, including WebSockets and binary formats like MessagePack, are supported in community extensions though not formally standardized.
+
+Protocol versioning follows a date-based scheme (e.g. 2025-03-26), with negotiation during handshake to ensure compatibility. Servers declare their supported resources, tools, and prompt templates through built-in introspection methods such as tools/list, resources/list, and update notifications like resources/list_changed.
+
+ Security architecture 
+MCP enforces a host-mediated security model. The host application governs permissions, prompts the user when AI requests access to tools or files, and mediates all traffic between the model and MCP servers.
+
+Security practices include:
+ Process isolation of servers, typically run in sandboxed environments with limited file or API access.
+ Path restrictions to enforce scoped access to local directories.
+ Encrypted transport via HTTPS, along with Origin validation to defend against DNS rebinding.
+ Authentication using API keys or OAuth, particularly in multi-user or remote deployments.
+ Audit logging of requests and responses to support observability and compliance.
+
+These design choices emphasize the principle of least privilege and make MCP adaptable to both personal and enterprise security needs.
+
+ Performance and scalability 
+MCP introduces minimal overhead beyond the latency of underlying tools. Benchmarks show sub-10 ms serialization and transmission time over stdio or HTTP/SSE, suitable for real-time applications.
+
+Key performance features include:
+ Streaming support, enabling partial responses from tools such as file readers or web scrapers.
+ Asynchronous execution of concurrent requests, with clients able to manage multiple tool invocations in parallel.
+ Horizontal scalability, allowing deployments of multiple MCP servers behind HTTP load balancers or orchestration systems like Kubernetes.
+
+MCP supports long-lived sessions and multiplexed connections, enabling complex agent workflows and distributed toolchains.
+
+ Implementation examples 
+MCP has been implemented in multiple programming languages through official SDKs and community libraries. As of 2025, supported SDKs include Python, TypeScript, Java, C#, Swift, and Rust.
+
+Notable implementations include:
+ Claude Desktop, which runs local stdio MCP servers to access user files and developer tools.
+ Sourcegraph, which enables AI access to code search and symbol navigation via MCP endpoints.
+ Replit and Zed, which integrate MCP into IDEs to provide real-time access to project files and build tools.
+ Microsoft, which contributed a C# SDK and runs MCP-based servers for GitHub and browser automation in Azure Copilot workflows.
+ Cloudflare Workers, which support remote MCP servers with OAuth-based authorization for secure, multi-tenant access.
+
+Developers typically choose between local sandboxed servers for on-device use, or remote cloud-hosted MCP servers with HTTP authentication.
+
+ Governance and ecosystem 
+The protocol is governed as an open standard under active development by Anthropic and the wider AI tooling community. Core development takes place in the public GitHub repository, which hosts the specification, reference implementations, and SDKs.
+
+An expanding ecosystem of third-party servers includes connectors for Slack, PostgreSQL, Google Drive, and Stripe. Registries such as mcp-get.com support server discovery and reuse. The protocol's adoption across multiple AI providers and agents suggests that MCP is emerging as a cross-model standard for secure, tool-based reasoning.
+
+ Reception 
+Initial reception from developers and analysts has been largely positive. Forbes called MCP a "significant step forward in AI integration", emphasizing its power in simplifying how models interact with structured data.
+
+The Verge reported that MCP addresses a growing demand for AI agents that are contextually aware and capable of securely pulling from diverse sources. Developers praised its plug-and-play architecture and model-agnostic design on platforms like GitHub and Hacker News.
+
+Some experts have raised concerns about overlap with existing standards like OpenAPI or the risk of fragmentation if too many competing protocols emerge.
+
+Nonetheless, the protocol's rapid uptake by OpenAI, Google DeepMind, and toolmakers like Zed and Sourcegraph suggests growing consensus around its utility.

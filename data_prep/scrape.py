@@ -1,7 +1,7 @@
 import mwparserfromhell
 import requests
 
-title = "2025_Indonesian_protests"
+title = "Model_Context_Protocol"
 # Send the API request for the "Dire wolf" page
 response = requests.get(
     "https://en.wikipedia.org/w/api.php",
