@@ -3,7 +3,7 @@ import sys
 import pandas as pd
 
 sys.path.append(".")
-from RAG.rag import graph_with_retriever, graph_direct, UpdateDatabase
+from RAG.rag import graph_with_retriever, UpdateDatabase
 
 UpdateDatabase(resolve_refs=True, only_pronouns=True)
 
