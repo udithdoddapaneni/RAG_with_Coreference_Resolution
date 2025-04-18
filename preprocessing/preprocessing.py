@@ -5,10 +5,10 @@ from fastcoref import FCoref
 WHITESPACES = set(string.whitespace)
 PRONOUNS = "i, you, he, she, it, we, they, me, you, him, it, us, them, mine, yours, his, hers, its, ours, theirs, my, your, his, her, our, their, this, that, there, then, when, which, who, what"
 PRONOUNS = set(PRONOUNS.split(", "))
-CONFIG = toml.load("config.toml")
-COREF_MODEL = FCoref()
+CONFIG = toml.load("config.toml")["FCoref"]
+COREF_MODEL = FCoref(**CONFIG)
 
-def ResolveReferences(text:str) -> str:
+def ResolveReferences(text:str, only_pronouns=True) -> str:
     clusters = COREF_MODEL.predict([text])[0].get_clusters(as_strings=False)
     resolved = set()
     changes = {}
@@ -25,7 +25,7 @@ def ResolveReferences(text:str) -> str:
                 
         if word_:
             for st, ed in cluster:
-                if text[st:ed] != word_ and (not (st in resolved)) and text[st:ed].lower().strip() != word_.lower().strip():
+                if text[st:ed] != word_ and (not (st in resolved)) and text[st:ed].lower().strip() != word_.lower().strip() and (text[st:ed] in PRONOUNS or not only_pronouns):
                     # no need to reference the same word or already referenced words 
                     changes[st] = (ed, word_)
                 resolved.add(st)

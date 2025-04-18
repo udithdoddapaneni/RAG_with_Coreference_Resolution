@@ -42,7 +42,7 @@ def reset() -> str:
         return "success"
     return result["exception"]
 
-def UpdateDatabase(resolve_refs=True):
+def UpdateDatabase(resolve_refs=True, only_pronouns=True):
     if reset() == "success":
         for root, dirs, files in os.walk("./Files"):
             for filename in files:
@@ -50,7 +50,7 @@ def UpdateDatabase(resolve_refs=True):
                 with open(filepath, "r") as file:
                     text = open(filepath, "r").read()
                 if resolve_refs:
-                    text = ResolveReferences(text) # resolve coreferences
+                    text = ResolveReferences(text, only_pronouns=True) # resolve coreferences
                 documents = splitter.split_text(text)
                 response = save(documents, [filepath]*len(documents))
                 if response != "success":

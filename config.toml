@@ -1,5 +1,5 @@
 [FCoref]
-device="cuda"
+device="cpu"
 enable_progress_bar=false
 
 [gemini]

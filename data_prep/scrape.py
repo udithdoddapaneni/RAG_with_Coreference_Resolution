@@ -1,13 +1,14 @@
 import mwparserfromhell
 import requests
 
+title = "2025_Indonesian_protests"
 # Send the API request for the "Dire wolf" page
 response = requests.get(
     "https://en.wikipedia.org/w/api.php",
     params={
         "action": "query",
         "format": "json",
-        "titles": "2025 stock market crash",
+        "titles": title,
         "prop": "revisions",
         "rvprop": "content",
         "rvslots": "main",  # Required for newer MediaWiki versions
@@ -27,7 +28,5 @@ else:
     plain_text = parsed_wikicode.strip_code().strip()
 
     # Save to a text file
-    with open("2025 Myanmar earthquake", "w", encoding="utf-8") as file:
+    with open("_".join(title.split())+".txt", "w", encoding="utf-8") as file:
         file.write(plain_text)
-
-    print("2025_earthquake.txt")
