@@ -1,1 +1,5 @@
-references: https://catdir.loc.gov/catdir/samples/random045/2002031355.html
+# How to run
+```
+uv sync
+uv run streamlit run main.py
+```
